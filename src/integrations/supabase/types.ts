@@ -14,7 +14,351 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          display_name: string
+          exam_preference: Database["public"]["Enums"]["exam_type"] | null
+          id: string
+          language_preference:
+            | Database["public"]["Enums"]["language_preference"]
+            | null
+          phone: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          display_name: string
+          exam_preference?: Database["public"]["Enums"]["exam_type"] | null
+          id?: string
+          language_preference?:
+            | Database["public"]["Enums"]["language_preference"]
+            | null
+          phone?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          display_name?: string
+          exam_preference?: Database["public"]["Enums"]["exam_type"] | null
+          id?: string
+          language_preference?:
+            | Database["public"]["Enums"]["language_preference"]
+            | null
+          phone?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      question_attempts: {
+        Row: {
+          attempt_status: Database["public"]["Enums"]["attempt_status"] | null
+          id: string
+          is_correct: boolean | null
+          marks_awarded: number | null
+          question_id: string
+          selected_answer: string | null
+          test_attempt_id: string
+          time_spent: number | null
+        }
+        Insert: {
+          attempt_status?: Database["public"]["Enums"]["attempt_status"] | null
+          id?: string
+          is_correct?: boolean | null
+          marks_awarded?: number | null
+          question_id: string
+          selected_answer?: string | null
+          test_attempt_id: string
+          time_spent?: number | null
+        }
+        Update: {
+          attempt_status?: Database["public"]["Enums"]["attempt_status"] | null
+          id?: string
+          is_correct?: boolean | null
+          marks_awarded?: number | null
+          question_id?: string
+          selected_answer?: string | null
+          test_attempt_id?: string
+          time_spent?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_attempts_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_attempts_test_attempt_id_fkey"
+            columns: ["test_attempt_id"]
+            isOneToOne: false
+            referencedRelation: "test_attempts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          correct_answer: string
+          created_at: string | null
+          difficulty: Database["public"]["Enums"]["difficulty_level"] | null
+          explanation_english: string | null
+          explanation_hindi: string | null
+          id: string
+          image_url: string | null
+          marks: number | null
+          negative_marks: number | null
+          option_a_english: string | null
+          option_a_hindi: string | null
+          option_b_english: string | null
+          option_b_hindi: string | null
+          option_c_english: string | null
+          option_c_hindi: string | null
+          option_d_english: string | null
+          option_d_hindi: string | null
+          question_text_english: string
+          question_text_hindi: string | null
+          question_type: Database["public"]["Enums"]["question_type"] | null
+          section: Database["public"]["Enums"]["section_type"]
+          topic_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string | null
+          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
+          explanation_english?: string | null
+          explanation_hindi?: string | null
+          id?: string
+          image_url?: string | null
+          marks?: number | null
+          negative_marks?: number | null
+          option_a_english?: string | null
+          option_a_hindi?: string | null
+          option_b_english?: string | null
+          option_b_hindi?: string | null
+          option_c_english?: string | null
+          option_c_hindi?: string | null
+          option_d_english?: string | null
+          option_d_hindi?: string | null
+          question_text_english: string
+          question_text_hindi?: string | null
+          question_type?: Database["public"]["Enums"]["question_type"] | null
+          section: Database["public"]["Enums"]["section_type"]
+          topic_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string | null
+          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
+          explanation_english?: string | null
+          explanation_hindi?: string | null
+          id?: string
+          image_url?: string | null
+          marks?: number | null
+          negative_marks?: number | null
+          option_a_english?: string | null
+          option_a_hindi?: string | null
+          option_b_english?: string | null
+          option_b_hindi?: string | null
+          option_c_english?: string | null
+          option_c_hindi?: string | null
+          option_d_english?: string | null
+          option_d_hindi?: string | null
+          question_text_english?: string
+          question_text_hindi?: string | null
+          question_type?: Database["public"]["Enums"]["question_type"] | null
+          section?: Database["public"]["Enums"]["section_type"]
+          topic_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_attempts: {
+        Row: {
+          duration_taken: number | null
+          id: string
+          is_completed: boolean | null
+          language_used:
+            | Database["public"]["Enums"]["language_preference"]
+            | null
+          percentage: number | null
+          percentile: number | null
+          started_at: string | null
+          submitted_at: string | null
+          test_id: string
+          total_score: number | null
+          user_id: string
+        }
+        Insert: {
+          duration_taken?: number | null
+          id?: string
+          is_completed?: boolean | null
+          language_used?:
+            | Database["public"]["Enums"]["language_preference"]
+            | null
+          percentage?: number | null
+          percentile?: number | null
+          started_at?: string | null
+          submitted_at?: string | null
+          test_id: string
+          total_score?: number | null
+          user_id: string
+        }
+        Update: {
+          duration_taken?: number | null
+          id?: string
+          is_completed?: boolean | null
+          language_used?:
+            | Database["public"]["Enums"]["language_preference"]
+            | null
+          percentage?: number | null
+          percentile?: number | null
+          started_at?: string | null
+          submitted_at?: string | null
+          test_id?: string
+          total_score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_attempts_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_questions: {
+        Row: {
+          id: string
+          question_id: string
+          question_order: number
+          test_id: string
+        }
+        Insert: {
+          id?: string
+          question_id: string
+          question_order: number
+          test_id: string
+        }
+        Update: {
+          id?: string
+          question_id?: string
+          question_order?: number
+          test_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_questions_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tests: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_minutes: number
+          exam_type: Database["public"]["Enums"]["exam_type"]
+          id: string
+          is_active: boolean | null
+          section: Database["public"]["Enums"]["section_type"] | null
+          test_type: Database["public"]["Enums"]["test_type"]
+          title: string
+          topic_id: string | null
+          total_marks: number
+          total_questions: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes: number
+          exam_type: Database["public"]["Enums"]["exam_type"]
+          id?: string
+          is_active?: boolean | null
+          section?: Database["public"]["Enums"]["section_type"] | null
+          test_type: Database["public"]["Enums"]["test_type"]
+          title: string
+          topic_id?: string | null
+          total_marks: number
+          total_questions: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number
+          exam_type?: Database["public"]["Enums"]["exam_type"]
+          id?: string
+          is_active?: boolean | null
+          section?: Database["public"]["Enums"]["section_type"] | null
+          test_type?: Database["public"]["Enums"]["test_type"]
+          title?: string
+          topic_id?: string | null
+          total_marks?: number
+          total_questions?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tests_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topics: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          section: Database["public"]["Enums"]["section_type"]
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          section: Database["public"]["Enums"]["section_type"]
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          section?: Database["public"]["Enums"]["section_type"]
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +367,26 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      attempt_status:
+        | "NOT_ATTEMPTED"
+        | "ANSWERED"
+        | "MARKED_FOR_REVIEW"
+        | "ANSWERED_AND_MARKED"
+      difficulty_level: "EASY" | "MEDIUM" | "HARD"
+      exam_type: "SSC_CGL" | "SSC_CHSL" | "SSC_MTS"
+      language_preference: "ENGLISH" | "HINDI"
+      question_type: "MCQ_SINGLE" | "MCQ_MULTI" | "NUMERICAL"
+      section_type:
+        | "QUANTITATIVE_APTITUDE"
+        | "REASONING"
+        | "GENERAL_AWARENESS"
+        | "ENGLISH"
+      test_type:
+        | "FULL_LENGTH"
+        | "SECTIONAL"
+        | "CHAPTER_WISE"
+        | "PREVIOUS_YEAR"
+        | "MINI_QUIZ"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +513,30 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      attempt_status: [
+        "NOT_ATTEMPTED",
+        "ANSWERED",
+        "MARKED_FOR_REVIEW",
+        "ANSWERED_AND_MARKED",
+      ],
+      difficulty_level: ["EASY", "MEDIUM", "HARD"],
+      exam_type: ["SSC_CGL", "SSC_CHSL", "SSC_MTS"],
+      language_preference: ["ENGLISH", "HINDI"],
+      question_type: ["MCQ_SINGLE", "MCQ_MULTI", "NUMERICAL"],
+      section_type: [
+        "QUANTITATIVE_APTITUDE",
+        "REASONING",
+        "GENERAL_AWARENESS",
+        "ENGLISH",
+      ],
+      test_type: [
+        "FULL_LENGTH",
+        "SECTIONAL",
+        "CHAPTER_WISE",
+        "PREVIOUS_YEAR",
+        "MINI_QUIZ",
+      ],
+    },
   },
 } as const
