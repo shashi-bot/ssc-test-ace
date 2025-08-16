@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import jwt from "jsonwebtoken";
@@ -6,8 +6,18 @@ import { v4 as uuidv4 } from "uuid";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
+// Extend Express Request type
+declare module 'express' {
+  interface Request {
+    user?: {
+      userId: string;
+      email: string;
+    };
+  }
+}
+
 // Middleware to verify JWT tokens
-function authenticateToken(req: any, res: any, next: any) {
+function authenticateToken(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -15,11 +25,11 @@ function authenticateToken(req: any, res: any, next: any) {
     return res.status(401).json({ message: 'Access token required' });
   }
 
-  jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
+  jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
     if (err) {
       return res.status(403).json({ message: 'Invalid or expired token' });
     }
-    req.user = user;
+    req.user = decoded;
     next();
   });
 }
@@ -112,7 +122,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/test-attempts', authenticateToken, async (req, res) => {
     try {
       const { testId } = req.body;
-      const userId = req.user.userId;
+      const userId = (req as any).user.userId;
 
       const attempt = await storage.createTestAttempt({
         userId,
@@ -133,7 +143,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { attemptId } = req.params;
       const attempt = await storage.getTestAttemptById(attemptId);
       
-      if (!attempt || attempt.userId !== req.user.userId) {
+      if (!attempt || attempt.userId !== (req as any).user.userId) {
         return res.status(404).json({ message: 'Test attempt not found' });
       }
 
@@ -152,7 +162,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/user-attempts', authenticateToken, async (req, res) => {
     try {
-      const userId = req.user.userId;
+      const userId = (req as any).user.userId;
       const attempts = await storage.getUserTestAttempts(userId);
       
       // Get test details for each attempt
@@ -188,7 +198,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Profile routes
   app.get('/api/profile', authenticateToken, async (req, res) => {
     try {
-      const userId = req.user.userId;
+      const userId = (req as any).user.userId;
       const profile = await storage.getProfileById(userId);
       
       if (!profile) {
