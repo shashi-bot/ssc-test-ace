@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/useApiAuth'
 import { GraduationCap, User, Settings, LogOut } from 'lucide-react'
 import { Link } from 'react-router-dom'
 

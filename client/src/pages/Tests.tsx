@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/useApiAuth'
 import { Header } from '@/components/Layout/Header'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { supabase } from '@/integrations/supabase/client'
+import { api } from '@/lib/api'
 import { toast } from 'sonner'
 
 export default function Tests() {
@@ -31,32 +31,13 @@ export default function Tests() {
   // Fetch available tests
   const { data: tests, isLoading } = useQuery({
     queryKey: ['tests'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('tests')
-        .select('*')
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      return data || []
-    }
+    queryFn: () => api.getTests()
   })
 
   // Fetch user's test attempts to show completion status
   const { data: userAttempts } = useQuery({
     queryKey: ['user-attempts', user?.id],
-    queryFn: async () => {
-      if (!user) return []
-      
-      const { data, error } = await supabase
-        .from('test_attempts')
-        .select('test_id, is_completed, percentage')
-        .eq('user_id', user.id)
-
-      if (error) throw error
-      return data || []
-    },
+    queryFn: () => api.getUserAttempts(),
     enabled: !!user
   })
 
@@ -68,18 +49,7 @@ export default function Tests() {
 
     try {
       // Create a new test attempt
-      const { data, error } = await supabase
-        .from('test_attempts')
-        .insert({
-          user_id: user.id,
-          test_id: testId,
-          started_at: new Date().toISOString(),
-          is_completed: false
-        })
-        .select()
-        .single()
-
-      if (error) throw error
+      const data = await api.createTestAttempt(testId)
 
       toast.success('Test started successfully!')
       navigate(`/test/${data.id}`)

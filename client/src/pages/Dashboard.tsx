@@ -1,4 +1,4 @@
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/useApiAuth'
 import { Header } from '@/components/Layout/Header'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { supabase } from '@/integrations/supabase/client'
+import { api } from '@/lib/api'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -147,7 +147,7 @@ export default function Dashboard() {
                           <div>
                             <p className="font-medium">{attempt.tests?.title}</p>
                             <p className="text-sm text-muted-foreground">
-                              {new Date(attempt.started_at).toLocaleDateString()}
+                              {attempt.started_at ? new Date(attempt.started_at).toLocaleDateString() : 'Unknown date'}
                             </p>
                           </div>
                         </div>

@@ -1,4 +1,4 @@
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/useApiAuth'
 import { Header } from '@/components/Layout/Header'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -16,7 +16,7 @@ import {
   Calendar
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { supabase } from '@/integrations/supabase/client'
+import { api } from '@/lib/api'
 import { Line, LineChart, Bar, BarChart, Pie, PieChart, Cell, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
 
 export default function Analytics() {
@@ -54,23 +54,23 @@ export default function Analytics() {
   const analytics = {
     totalTests: testAttempts?.length || 0,
     avgScore: testAttempts?.length 
-      ? Math.round(testAttempts.reduce((acc, curr) => acc + curr.percentage, 0) / testAttempts.length)
+      ? Math.round(testAttempts.reduce((acc, curr) => acc + (curr.percentage || 0), 0) / testAttempts.length)
       : 0,
     bestScore: testAttempts?.length 
-      ? Math.max(...testAttempts.map(a => a.percentage))
+      ? Math.max(...testAttempts.map(a => a.percentage || 0))
       : 0,
     totalTimeSpent: testAttempts?.reduce((acc, curr) => acc + (curr.duration_taken || 0), 0) || 0,
-    improvement: testAttempts?.length >= 2 
-      ? testAttempts[testAttempts.length - 1].percentage - testAttempts[0].percentage
+    improvement: testAttempts?.length && testAttempts.length >= 2 
+      ? (testAttempts[testAttempts.length - 1].percentage || 0) - (testAttempts[0].percentage || 0)
       : 0
   }
 
   // Performance over time data
   const performanceData = testAttempts?.map((attempt, index) => ({
     test: index + 1,
-    score: attempt.percentage,
-    date: new Date(attempt.submitted_at!).toLocaleDateString(),
-    testName: attempt.tests?.title?.substring(0, 15) + '...'
+    score: attempt.percentage || 0,
+    date: attempt.submitted_at ? new Date(attempt.submitted_at).toLocaleDateString() : '',
+    testName: attempt.tests?.title ? attempt.tests.title.substring(0, 15) + '...' : 'Unknown Test'
   })) || []
 
   // Section-wise performance
@@ -80,7 +80,7 @@ export default function Analytics() {
       acc[section] = { section, totalTests: 0, totalScore: 0, avgScore: 0 }
     }
     acc[section].totalTests += 1
-    acc[section].totalScore += attempt.percentage
+    acc[section].totalScore += (attempt.percentage || 0)
     acc[section].avgScore = Math.round(acc[section].totalScore / acc[section].totalTests)
     return acc
   }, {})
@@ -347,7 +347,7 @@ export default function Analytics() {
                           fill="#8884d8"
                           dataKey="value"
                         >
-                          {testTypeData.map((entry, index) => (
+                          {testTypeData.map((entry: any, index: number) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
